@@ -52,9 +52,9 @@ var initSample = (function() {
 })();
 
 $(document).ready(function() {
-    var baseUrl = "http://api.sanfor.com.cn";
-    // var baseUrl = "http://localhost:4001";
-    // 
+    // var baseUrl = "http://api.sanfor.com.cn";
+    var baseUrl = "http://localhost:4001";
+
     var el = {
         id: $('#id'),
         date: $('#date'),
@@ -132,22 +132,41 @@ $(document).ready(function() {
     });
 
     function load() {
+        var token = localStorage.getItem('id_token');
         var id = getParameterByName("id");
         if (id) {
-            $.get(baseUrl + "/api/homework?id=" + id, function(data) {
-                // alert(data);
-                if (data && data.length > 0) {
-                    el.id.val(data[0]._id);
+            $.ajax({
+                url: baseUrl + "/api/homeworks/" + id,
+                type: 'get',
+                headers: { "authorization": 'Bearer ' + token },
+                dataType: 'json',
+                success: function(data) {
+                    if (data) {
+                        el.id.val(data._id);
 
-                    el.catgory.val(data[0].catgory);
-                    el.date.val(data[0].date.substring(0,10));
-                    // el.content.html(data[0].content);
-                    CKEDITOR.instances.editor.setData(data[0].content);
-                    el.theClass.val(data[0].theClass);
+                        el.catgory.val(data.catgory);
+                        el.date.val(data.date.substring(0, 10));
+                        // el.content.html(data[0].content);
+                        CKEDITOR.instances.editor.setData(data.content);
+                        el.theClass.val(data.theClass);
 
+                    }
                 }
-
             });
+            // $.get(baseUrl + "/api/homeworks/" + id, function(data) {
+            //     // alert(data);
+            //     if (data && data.length > 0) {
+            //         el.id.val(data[0]._id);
+
+            //         el.catgory.val(data[0].catgory);
+            //         el.date.val(data[0].date.substring(0, 10));
+            //         // el.content.html(data[0].content);
+            //         CKEDITOR.instances.editor.setData(data[0].content);
+            //         el.theClass.val(data[0].theClass);
+
+            //     }
+
+            // });
         }
 
         if (!el.date.val()) {
@@ -157,22 +176,50 @@ $(document).ready(function() {
     }
 
     function save(status) {
+        var reqBody = {
+            "id": el.id.val(),
+            "catgory": el.catgory.val(),
+            "date": el.date.val(),
+            "content": CKEDITOR.instances.editor.getData(),
+            "theClass": el.theClass.val(),
+            "status": status
+        };
+        // localStorage.setItem('favoriteflavor', 'vanilla');
+        var token = localStorage.getItem('id_token');
+        var type = el.id.val() ? 'put' : 'post';
+        var subUrl = el.id.val() ? '/api/homeworks/' + el.id.val() : '/api/homeworks';
 
-        $.post(baseUrl + "/api/homeworks/save", {
-                "id": el.id.val(),
-                "catgory": el.catgory.val(),
-                "date": el.date.val(),
-                "content": CKEDITOR.instances.editor.getData(),
-                "theClass": el.theClass.val(),
-                "status": status
-            },
-            function(data) {
+        $.ajax({
+            url: baseUrl + subUrl,
+            type: type,
+            data: reqBody,
+            headers: { "authorization": 'Bearer ' + token },
+            dataType: 'json',
+            success: function(data) {
                 if (data._id) {
                     location.href = "/";
                 } else {
                     alert('操作失败');
                 }
-            }, "json");
+            }
+        });
+
+        // $.post(baseUrl + "/api/homeworks/save", {
+        //         "id": el.id.val(),
+        //         "catgory": el.catgory.val(),
+        //         "date": el.date.val(),
+        //         "content": CKEDITOR.instances.editor.getData(),
+        //         "theClass": el.theClass.val(),
+        //         "status": status
+        //     },
+        //     function(data) {
+        //         if (data._id) {
+        //             location.href = "/";
+        //         } else {
+        //             alert('操作失败');
+        //         }
+        //     }, "json");
+
         // alert(el.content.html());
     }
 

@@ -69,13 +69,6 @@ export class ProfilePage implements OnInit, OnDestroy {
 	ngOnDestroy() {
 	}
 
-	save() {
-		this.auth.saveSettings(this.user)
-			.then(data => this.authSuccess(data.id_token)
-			)
-			.catch(error => this.error = error);;
-	}
-
 	// testRadioOpen: boolean;
 	// testRadioResult: any;
 	selectClass() {
@@ -104,16 +97,21 @@ export class ProfilePage implements OnInit, OnDestroy {
 				var newRoles = this.user.roles.split(',').filter(r => r.indexOf('class') < 0);
 				newRoles.push(data);
 				this.user.roles = newRoles.join(',');
-				this.save();
+				this.auth.settingRoles({ roles: this.user.roles })
+					.then(data => this.authSuccess(data.id_token))
+					.catch(error => this.error = error);
+				if (this.error) {
+					this.toast(this.error);
+					return false;
+				}
 			}
 		});
 		this.nav.present(alert);
 	}
 
-	selectLoginName() {
+	setLoginName() {
 		let alert = Alert.create();
 		alert.setTitle('更改登录名!');
-		alert.setHeader('aaa');
 
 		alert.addInput({
 			type: 'text',
@@ -133,28 +131,76 @@ export class ProfilePage implements OnInit, OnDestroy {
 				// 	console.log('Prompt close');
 				// 	alert.dismiss(data);
 				// }, 2000);
-				// 
-				this.toast();
 
-				// do not close the alert when this button is pressed
-				return false;
-
-				// this.testRadioOpen = false;
-				// this.testRadioResult = data;
-				// this.user.theClass = data;
-				// this.user.theClassDesc = classes.find(c => c.value == data).name;
-				// var newRoles = this.user.roles.split(',').filter(r => r.indexOf('class') < 0);
-				// newRoles.push(data);				
-				// this.user.roles = newRoles.join(',');
-				// this.save();
+				this.user.username = data.username;
+				this.auth.modifyLoginName({ username: this.user.username })
+					.then(data => this.authSuccess(data.id_token))
+					.catch(error => {
+						this.error = error;
+					});
+				if (this.error) {
+					this.toast(this.error);
+					return false;
+				}
 			}
 		});
 		this.nav.present(alert);
 	}
 
-	toast() {
+	setPassword() {
+		let alert = Alert.create();
+		alert.setTitle('更改密码!');
+
+		alert.addInput({
+			type: 'text',
+			name: 'password',
+			placeholder: '原密码',
+			value: ''
+		});
+		alert.addInput({
+			type: 'text',
+			name: 'newPassword',
+			placeholder: '新密码',
+			value: ''
+		});
+
+		alert.addInput({
+			type: 'text',
+			name: 'newConfirmPassword',
+			placeholder: '再输一次新密码',
+			value: ''
+		});
+
+		alert.addButton('取消');
+		alert.addButton({
+			text: '确认',
+			handler: (data: any) => {
+				// console.log('Radio data:', data);
+				console.log('500ms delayed prompt close');
+
+				// setTimeout(() => {
+				// 	console.log('Prompt close');
+				// 	alert.dismiss(data);
+				// }, 2000);
+
+
+				this.auth.resetPassword({ password: data.password, newPassword: data.newPassword, newConfirmPassword: data.newConfirmPassword })
+					.then(data => this.authSuccess(data.id_token))
+					.catch(error => {
+						this.error = error;
+					});
+				if (this.error) {
+					this.toast(this.error);
+					return false;
+				}
+			}
+		});
+		this.nav.present(alert);
+	}
+
+	toast(message: string) {
 		let toast = Toast.create({
-			message: 'User was added successfully',
+			message: message,
 			duration: 3000,
 			position: 'middle'
 		});

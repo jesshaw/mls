@@ -1,11 +1,11 @@
 import { Component, ViewChild, provide } from '@angular/core';
 import {Http, HTTP_PROVIDERS, URLSearchParams} from '@angular/http';
-import {AuthHttp, AuthConfig} from 'angular2-jwt';
+import {AuthHttp, AuthConfig, AUTH_PROVIDERS} from 'angular2-jwt';
 
 import { ionicBootstrap, Platform, Nav, Storage, LocalStorage } from 'ionic-angular';
 import { StatusBar } from 'ionic-native';
 
-import 'rxjs/add/operator/map';
+// import 'rxjs/add/operator/map';
 
 import {AuthService} from './shared/auth.service';
 import { HomeworkService } from './shared/homework.service';
@@ -18,19 +18,12 @@ import {ExercisesPage} from './pages/exercises/exercises';
 import {ReviewingExercisesPage} from './pages/reviewing-exercises/reviewing-exercises';
 import {Page2} from './pages/page2/page2';
 
+import './shared/rxjs-extensions';
+
 
 @Component({
 	templateUrl: 'build/app.html',
-	providers: [
-		provide(AuthHttp, {
-			useFactory: (http) => {
-				return new AuthHttp(new AuthConfig(), http);
-			},
-			deps: [Http]
-		}),
-		AuthService
-		, HomeworkService
-	]
+	providers: [AuthService, HomeworkService]
 })
 class MyApp {
 	@ViewChild(Nav) nav: Nav;
@@ -90,6 +83,7 @@ class MyApp {
 	authSuccess(token) {
 		this.error = null;
 		this.local.set('id_token', token);
+		localStorage.setItem('id_token', token);
 		var roles: string = Util.getDecodeObject(token).roles
 		this.isTeacher = roles.indexOf('teacher') >= 0;
 		if (roles.indexOf('class') >= 0) {
@@ -108,7 +102,14 @@ class MyApp {
 }
 
 ionicBootstrap(MyApp, [
-    HTTP_PROVIDERS
+    HTTP_PROVIDERS,
+	AUTH_PROVIDERS,
+	provide(AuthHttp, {
+		useFactory: (http) => {
+			return new AuthHttp(new AuthConfig(), http);
+		},
+		deps: [Http]
+	})
     // ,	{ provide: XHRBackend, useClass: InMemoryBackendService }, // in-mem server
     // { provide: SEED_DATA, useClass: InMemoryDataService }      // in-mem server data]
 ]);
