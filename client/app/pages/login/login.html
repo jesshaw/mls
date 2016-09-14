@@ -1,0 +1,57 @@
+<!--
+  Generated template for the LoginPage page.
+
+  See http://ionicframework.com/docs/v2/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+    <ion-navbar>
+        <button menuToggle>
+            <ion-icon name="menu"></ion-icon>
+        </button>
+        <ion-title>登录</ion-title>
+    </ion-navbar>
+</ion-header>
+<ion-content class="login" *ngIf="!auth.authenticated()">
+    <div padding>
+        <ion-segment [(ngModel)]="authType">
+            <ion-segment-button value="login">
+                登录
+            </ion-segment-button>
+            <ion-segment-button value="signup">
+                注册
+            </ion-segment-button>
+        </ion-segment>
+    </div>
+    <div [ngSwitch]="authType">
+        <form *ngSwitchCase="'login'" #loginCreds="ngForm" (ngSubmit)="login(loginCreds.value)">
+            <ion-item>
+                <ion-label>用户名</ion-label>
+                <ion-input type="text" ngControl="username"></ion-input>
+            </ion-item>
+            <ion-item>
+                <ion-label>密码</ion-label>
+                <ion-input type="password" ngControl="password"></ion-input>
+            </ion-item>
+            <div padding>
+                <button block type="submit">登录</button>
+            </div>
+        </form>
+        <form *ngSwitchCase="'signup'" #signupCreds="ngForm" (ngSubmit)="signup(signupCreds.value)">
+            <ion-item>
+                <ion-label>用户名</ion-label>
+                <ion-input type="text" ngControl="username"></ion-input>
+            </ion-item>
+            <ion-item>
+                <ion-label>密码</ion-label>
+                <ion-input type="password" ngControl="password"></ion-input>
+            </ion-item>
+            <div padding>
+                <button block type="submit">创建</button>
+            </div>
+        </form>
+    </div>
+    <div padding>
+        <p *ngIf="error" class="error">{{ error._body }}</p>
+    </div>
+</ion-content>

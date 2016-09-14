@@ -1,0 +1,108 @@
+<!--
+  Generated template for the ProfilePage page.
+
+  See http://ionicframework.com/docs/v2/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+    <ion-navbar>
+        <button menuToggle>
+            <ion-icon name="menu"></ion-icon>
+        </button>
+        <ion-title>设置</ion-title>
+    </ion-navbar>
+</ion-header>
+<ion-content *ngIf="auth.authenticated()">
+    <ion-list no-border>
+        <ion-list-header>
+            用户信息
+        </ion-list-header>
+        <ion-item  (click)="selectClass()">
+            <ion-icon name='people' item-left></ion-icon>
+            所在班级
+            <ion-note item-right>
+                {{user.theClassDesc}}
+            </ion-note>
+        </ion-item>
+        <ion-item>
+            <ion-icon name='contact' item-left></ion-icon>
+            角色
+            <ion-note item-right>
+                {{user.roles}}
+            </ion-note>
+        </ion-item>
+    </ion-list>
+    <ion-list no-border>
+        <ion-list-header>
+            登陆信息
+        </ion-list-header>
+        <ion-item>
+            <ion-icon name='person' item-left></ion-icon>
+            用户名
+            <ion-note item-right>
+                {{user.username}}
+            </ion-note>
+        </ion-item>
+        <ion-item>
+            <ion-icon name='lock' item-left></ion-icon>
+            密码
+            <ion-note item-right>
+                {{user.password}}
+            </ion-note>
+        </ion-item>
+    </ion-list>
+    <ion-list no-border>
+        <ion-list-header>
+            微信信息
+        </ion-list-header>
+        <ion-item>
+            <ion-icon name='chatbubbles' item-left></ion-icon>
+            微信号
+            <ion-note item-right>
+                {{user.wxUsername}}
+            </ion-note>
+        </ion-item>
+        <ion-item>
+            <ion-toggle [checked]="user.isBindWx"  disabled="true"></ion-toggle>
+            <ion-label>
+                已绑定
+            </ion-label>
+            <ion-icon name='link' item-left></ion-icon>
+        </ion-item>
+    </ion-list>
+  <!--   <ion-list no-border>
+        <ion-list-header>
+            Classes
+        </ion-list-header>
+        <ion-item>
+            <ion-icon name='planet' item-left></ion-icon>
+            Astronomy
+            <ion-note item-right>
+                To the moon
+            </ion-note>
+        </ion-item>
+        <ion-item>
+            <ion-toggle checked="false"></ion-toggle>
+            <ion-label>
+                Muggle Studies
+            </ion-label>
+            <ion-icon name='body' item-left></ion-icon>
+        </ion-item>
+        <ion-item>
+            <ion-icon name='leaf' item-left></ion-icon>
+            Herbology
+            <ion-icon name='rose' item-right secondary></ion-icon>
+        </ion-item>
+        <ion-item>
+            <ion-icon name='flask' item-left></ion-icon>
+            Potions
+            <ion-note item-right>
+                Poisonous
+            </ion-note>
+        </ion-item>
+    </ion-list> -->
+    <button block full light (click)="logout()">退出</button>    
+</ion-content>
+<!-- <ion-content [ngStyle]="{'top': '100px'}" *ngIf="!auth.authenticated()">
+    <button block full (click)="openLoginPage()">登陆</button>
+</ion-content> -->
