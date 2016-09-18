@@ -31,12 +31,24 @@ export class AuthService {
 
 	constructor(private http: Http, private autHttp: AuthHttp) { }
 
+	signup(credentials) {
+		return new Promise<any>(resolve => {
+			this.http.post(this.registerNewUserUrl, JSON.stringify(credentials), { headers: this.contentHeader })
+				.subscribe(response => {
+					console.log(response.json());
+					resolve(response.json());
+				});
+		});
+	}
+
 	public login(credentials) {
-		return this.http.post(this.loginUrl, JSON.stringify(credentials), { headers: this.contentHeader })
-			.map(res => {
-				console.log(res);
-				return res.json()
-			});
+		return new Promise<any>(resolve => {
+			this.http.post(this.loginUrl, JSON.stringify(credentials), { headers: this.contentHeader })
+				.subscribe(response => {
+					console.log(response.json());
+					resolve(response.json());
+				});
+		});
 	}
 
 	public authenticated() {
